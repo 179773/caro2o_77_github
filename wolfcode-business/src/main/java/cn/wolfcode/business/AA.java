@@ -5,4 +5,5 @@ public class AA {
     private String Ab;
     private String CC;
     private String DD;
+    private String SD;
 }
