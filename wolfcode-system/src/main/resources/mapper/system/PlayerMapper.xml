@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wolfcode.system.mapper.PlayerMapper">
+    
+    <resultMap type="Player" id="PlayerResult">
+        <result property="id"    column="id"    />
+        <result property="username"    column="username"    />
+        <result property="email"    column="email"    />
+        <result property="age"    column="age"    />
+        <result property="score"    column="score"    />
+        <result property="level"    column="level"    />
+        <result property="registrationDate"    column="registration_date"    />
+        <result property="lastLogin"    column="last_login"    />
+    </resultMap>
+
+    <sql id="selectPlayerVo">
+        select id, username, email, age, score, level, registration_date, last_login from player
+    </sql>
+
+    <select id="selectPlayerList" parameterType="Player" resultMap="PlayerResult">
+        <include refid="selectPlayerVo"/>
+        <where>  
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="age != null "> and age &gt; #{age}</if>
+            <if test="level != null  and level != ''"> and level = #{level}</if>
+        </where>
+    </select>
+    
+    <select id="selectPlayerById" parameterType="Long" resultMap="PlayerResult">
+        <include refid="selectPlayerVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPlayer" parameterType="Player" useGeneratedKeys="true" keyProperty="id">
+        insert into player
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">username,</if>
+            <if test="email != null">email,</if>
+            <if test="age != null">age,</if>
+            <if test="score != null">score,</if>
+            <if test="level != null">level,</if>
+            <if test="registrationDate != null">registration_date,</if>
+            <if test="lastLogin != null">last_login,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="email != null">#{email},</if>
+            <if test="age != null">#{age},</if>
+            <if test="score != null">#{score},</if>
+            <if test="level != null">#{level},</if>
+            <if test="registrationDate != null">#{registrationDate},</if>
+            <if test="lastLogin != null">#{lastLogin},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePlayer" parameterType="Player">
+        update player
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="registrationDate != null">registration_date = #{registrationDate},</if>
+            <if test="lastLogin != null">last_login = #{lastLogin},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePlayerById" parameterType="Long">
+        delete from player where id = #{id}
+    </delete>
+
+    <delete id="deletePlayerByIds" parameterType="String">
+        delete from player where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

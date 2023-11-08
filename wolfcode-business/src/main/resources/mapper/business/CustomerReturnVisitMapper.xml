@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wolfcode.business.mapper.CustomerReturnVisitMapper">
+    
+    <resultMap type="CustomerReturnVisit" id="CustomerReturnVisitResult">
+        <result property="id"    column="id"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="visitMethod"    column="visit_method"    />
+        <result property="visitReason"    column="visit_reason"    />
+        <result property="visitResult"    column="visit_result"    />
+        <result property="visitDate"    column="visit_date"    />
+        <result property="entryUser"    column="entry_user"    />
+        <result property="entryTime"    column="entry_time"    />
+    </resultMap>
+
+    <sql id="selectCustomerReturnVisitVo">
+        select id, customer_name, visit_method, visit_reason, visit_result, visit_date, entry_user, entry_time from customer_return_visit
+    </sql>
+
+    <select id="selectCustomerReturnVisitList" parameterType="CustomerReturnVisit" resultMap="CustomerReturnVisitResult">
+        <include refid="selectCustomerReturnVisitVo"/>
+        <where>  
+            <if test="customerName != null  and customerName != ''"> and customer_name = #{customerName}</if>
+            <if test="visitMethod != null  and visitMethod != ''"> and visit_method = #{visitMethod}</if>
+            <if test="params.beginVisitDate != null and params.beginVisitDate != '' and params.endVisitDate != null and params.endVisitDate != ''"> and visit_date between #{params.beginVisitDate} and #{params.endVisitDate}</if>
+            <if test="entryUser != null  and entryUser != ''"> and entry_user = #{entryUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectCustomerReturnVisitById" parameterType="Long" resultMap="CustomerReturnVisitResult">
+        <include refid="selectCustomerReturnVisitVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectUserList" resultType="cn.wolfcode.common.core.domain.entity.SysUser">
+        select * from sys_user
+    </select>
+
+    <insert id="insertCustomerReturnVisit" parameterType="CustomerReturnVisit" useGeneratedKeys="true" keyProperty="id">
+        insert into customer_return_visit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerName != null">customer_name,</if>
+            <if test="visitMethod != null">visit_method,</if>
+            <if test="visitReason != null">visit_reason,</if>
+            <if test="visitResult != null">visit_result,</if>
+            <if test="visitDate != null">visit_date,</if>
+            <if test="entryUser != null">entry_user,</if>
+            <if test="entryTime != null">entry_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerName != null">#{customerName},</if>
+            <if test="visitMethod != null">#{visitMethod},</if>
+            <if test="visitReason != null">#{visitReason},</if>
+            <if test="visitResult != null">#{visitResult},</if>
+            <if test="visitDate != null">#{visitDate},</if>
+            <if test="entryUser != null">#{entryUser},</if>
+            <if test="entryTime != null">#{entryTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCustomerReturnVisit" parameterType="CustomerReturnVisit">
+        update customer_return_visit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerName != null">customer_name = #{customerName},</if>
+            <if test="visitMethod != null">visit_method = #{visitMethod},</if>
+            <if test="visitReason != null">visit_reason = #{visitReason},</if>
+            <if test="visitResult != null">visit_result = #{visitResult},</if>
+            <if test="visitDate != null">visit_date = #{visitDate},</if>
+            <if test="entryUser != null">entry_user = #{entryUser},</if>
+            <if test="entryTime != null">entry_time = #{entryTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCustomerReturnVisitById" parameterType="Long">
+        delete from customer_return_visit where id = #{id}
+    </delete>
+
+    <delete id="deleteCustomerReturnVisitByIds" parameterType="String">
+        delete from customer_return_visit where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
